@@ -21,19 +21,25 @@ class CaptchaHandler:
         :param image: 图形验证码图片
         :return: str, 验证码的文字
         """
-        # 打码平台 url
-        platform_url = "https://"
-        data = {
-            "user": "12121",
+        api_post_url = "http://www.bingtop.com/ocr/upload/"
+        # with open(img_url, 'rb') as pic_file:
+        #     img64 = base64.b64encode(pic_file.read())
+        params = {
+            "username": "liulu",
             "password": "19981229",
-            "image": base64.b64encode(image)
+            "captchaData": base64.b64encode(image),
+            "captchaType": 1000
         }
-        r = post(platform_url, data=data)
+        response = post(api_post_url, data=params)
+
         # 连接打码平台失败
-        if not r.status_code == 200:
+        if not response.status_code == 200:
             return ""
-        r = json.loads(r.text)
-        return r["captcha"]
+        data = json.loads(response.text)
+        # 出错则 message 非空
+        if data["message"]:
+            return ""
+        return data["recognition"]
 
 
 class Spider:
