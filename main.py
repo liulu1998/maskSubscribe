@@ -67,6 +67,8 @@ class MainScheduler:
             if list(set(achieved))[0]:
                 flag = True
                 break
+            # 避免爬取过快
+            time.sleep(0.2)
 
         if flag:
             print("---- 成功 嘻嘻嘻 ----")

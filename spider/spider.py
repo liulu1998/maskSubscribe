@@ -69,7 +69,7 @@ class Spider:
         r = self.session.get(self.base_url, headers=self.headers)
         if not r.status_code == 200:
             # return False
-            queue.push(ProcessState._make([index, False]))
+            queue.put(ProcessState._make([index, False]))
             return
 
         # TODO 解析验证码图片
@@ -80,13 +80,14 @@ class Spider:
 
         # 提交表单
         r = self.session.post(self.post_url, headers=self.headers, data=self.order)
+
         if not r.status_code == 200:
-            queue.push(ProcessState._make([index, False]))
+            queue.put(ProcessState._make([index, False]))
             return
 
         # TODO 解析返回的 json
         r = json.loads(r.text)
         if r["status"] == "成功":
-            queue.push(ProcessState._make([index, True]))
+            queue.put(ProcessState._make([index, True]))
         else:
-            queue.push(ProcessState._make([index, False]))
+            queue.put(ProcessState._make([index, False]))
