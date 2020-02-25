@@ -48,6 +48,7 @@ class Spider:
     # 青岛政务 url
     base_url = "http://"
     post_url = "http://"
+
     headers = {
         "User-Agent": "Mozilla/5.0 (Linux; Android 10; Redmi K20 Pro Build/QKQ1.190825.002; wv) AppleWebKit/537.36 " +
                       "(KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2" +
@@ -65,11 +66,10 @@ class Spider:
         self.session = Session()
         self.achieved = False
 
-    def subscribe(self):
+    def subscribe(self) -> None:
         """ 为一条预约信息预约
         :param index, 为该进程分配的
         :param queue, 保存进程信息的队列
-        :return: 是否预约成功
         """
         r = self.session.get(self.base_url, headers=self.headers)
         if not r.status_code == 200:

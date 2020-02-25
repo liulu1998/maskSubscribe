@@ -2,6 +2,7 @@
 import time
 import datetime
 import multiprocessing
+from functools import reduce
 
 from spider.spider import Spider
 from spider.info import InfoHandler
@@ -62,9 +63,9 @@ class MainScheduler:
             # 开始多进程运行
             pool.close()
             pool.join()
-
-            states = [spider.achieved for spider in spiders]
-            if list(set(states))[0]:
+            # 所有爬虫的完成情况, 依次做逻辑与
+            states = map(lambda x: x.achieved, spiders)
+            if reduce(lambda x, y: x and y, states):
                 break
             # 处理完成情况
             # while not queue.empty():
@@ -77,10 +78,11 @@ class MainScheduler:
             # 避免爬取过快
             time.sleep(0.2)
 
-        if flag:
-            print("---- 成功 嘻嘻嘻 ----")
-        else:
-            print("---- 失败 55555 ----")
+        # if flag:
+        #     print("---- 成功 嘻嘻嘻 ----")
+        # else:
+        #     print("---- 失败 55555 ----")
+        print({True: "成功了 嘻嘻嘻", False: "失败了 5555"}[flag])
 
 
 if __name__ == '__main__':
