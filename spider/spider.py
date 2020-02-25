@@ -49,7 +49,11 @@ class Spider:
     base_url = "http://"
     post_url = "http://"
     headers = {
-
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; Redmi K20 Pro Build/QKQ1.190825.002; wv) AppleWebKit/537.36 " +
+                      "(KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2" +
+                      "TBS/45016 Mobile Safari/537.36 MMWEBID/3704 MicroMessenger/7.0.10.1580(0x27000AFE) Process/tools" +
+                      " NetType/WIFI Language/zh_CN ABI/arm64",
+        "Host": "kzyynew.qingdao.gov.cn:81"
     }
 
     def __init__(self, order: dict):
