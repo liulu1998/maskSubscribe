@@ -38,9 +38,9 @@ class MainScheduler:
         # 为每条预约信息构造爬虫
         spiders = [Spider(order) for order in self.orders]
         # 是否完成
-        achieved = [False] * len(spiders)
+        # achieved = [False] * len(spiders)
         # 进程安全的队列
-        queue = multiprocessing.Manager().Queue(len(spiders))
+        # queue = multiprocessing.Manager().Queue(len(spiders))
         # 进程池
         pool = multiprocessing.Pool(NUM_PROCESS)
 
@@ -53,20 +53,27 @@ class MainScheduler:
         for epoch in range(MAX_RETRY):
             print(f"---- 第{epoch+1}次尝试 ----")
             # 未完成的任务加入进程池
-            for i, (spider, state) in enumerate(zip(spiders, achieved)):
-                if not state:
-                    pool.apply_async(func=spider.subscribe, args=(i, queue))
+            # for i, (spider, state) in enumerate(zip(spiders, achieved)):
+            #     if not state:
+            #         pool.apply_async(func=spider.subscribe, args=(i, queue))
+            for spider in spiders:
+                if not spider.achieved:
+                    pool.apply_async(func=spider.subscribe)
             # 开始多进程运行
             pool.close()
             pool.join()
-            # 处理完成情况
-            while not queue.empty():
-                p_state = queue.get()
-                achieved[p_state.index] = p_state.state
 
-            if list(set(achieved))[0]:
-                flag = True
+            states = [spider.achieved for spider in spiders]
+            if list(set(states))[0]:
                 break
+            # 处理完成情况
+            # while not queue.empty():
+            #     p_state = queue.get()
+            #     achieved[p_state.index] = p_state.state
+
+            # if list(set(achieved))[0]:
+            #     flag = True
+            #     break
             # 避免爬取过快
             time.sleep(0.2)
 

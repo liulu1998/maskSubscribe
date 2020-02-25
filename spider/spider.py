@@ -63,8 +63,9 @@ class Spider:
         # 所有预约信息
         self.order = order
         self.session = Session()
+        self.achieved = False
 
-    def subscribe(self, index: int, queue):
+    def subscribe(self):
         """ 为一条预约信息预约
         :param index, 为该进程分配的
         :param queue, 保存进程信息的队列
@@ -73,7 +74,7 @@ class Spider:
         r = self.session.get(self.base_url, headers=self.headers)
         if not r.status_code == 200:
             # return False
-            queue.put(ProcessState._make([index, False]))
+            # queue.put(ProcessState._make([index, False]))
             return
 
         # TODO 解析验证码图片
@@ -86,12 +87,13 @@ class Spider:
         r = self.session.post(self.post_url, headers=self.headers, data=self.order)
 
         if not r.status_code == 200:
-            queue.put(ProcessState._make([index, False]))
+            # queue.put(ProcessState._make([index, False]))
             return
 
         # TODO 解析返回的 json
         r = json.loads(r.text)
         if r["status"] == "成功":
-            queue.put(ProcessState._make([index, True]))
-        else:
-            queue.put(ProcessState._make([index, False]))
+            # queue.put(ProcessState._make([index, True]))
+            self.achieved = True
+        # else:
+        #     queue.put(ProcessState._make([index, False]))
