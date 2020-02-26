@@ -42,7 +42,6 @@ class MultiSpider:
         flag = False
         # 尝试 MAX_RETRY 轮
         for epoch in range(MAX_RETRY):
-            print(f"---- 第{epoch+1}次尝试 ----")
 
             pool = multiprocessing.Pool(NUM_PROCESS)
             for spider in spiders:
@@ -61,9 +60,9 @@ class MultiSpider:
             time.sleep(0.1)
 
         if flag:
-            print("---- 成功 嘻嘻嘻 ----")
+            print("---- 成功 嘻嘻 ----")
         else:
-            print("---- 失败 55555 ----")
+            print(f"---- 尝试了{MAX_RETRY}次 ----\n---- 失败 5555 ----")
 
 
 if __name__ == '__main__':
