@@ -1,20 +1,21 @@
 {
   "startTime": "09:30",
   "orders": [
-    {
-      "id": "370xxxxxxxxxxxxxxx",
-      "region": "青岛市",
-      "street": "街道"
-    },
-    {
-      "id": "370xxxxxxxxxxxxxxx",
-      "region": "青岛市",
-      "street": "街道"
-    },
-    {
-      "id": "370xxxxxxxxxxxxxxx",
-      "region": "青岛市",
-      "street": "街道"
-    }
+	  {
+		"address": "猫猫东路55号5号楼5单元505户",
+		"name": "刘陆",
+		"mobile": "17745183060",
+		"code": "123456199812297890",
+		"area": "喵区",
+		"street": "喵喵街道办事处"
+	  },
+	  {
+		  "address": "详细住址, 放在引号内部",
+		  "name": "姓名, 放在引号内部",
+		  "mobile": "电话号码, 放在引号内部",
+		  "code": "身份证号, 放在引号内部",
+		  "area": "所在的区, 放在引号内部",
+		  "street": "xx街道办事处, 参照 docs/street.json"
+	  }
   ]
 }

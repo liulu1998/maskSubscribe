@@ -2,7 +2,6 @@
 import json
 import base64
 from collections import namedtuple
-from bs4 import BeautifulSoup as BS
 from requests import get, post, Session
 
 """
@@ -22,8 +21,7 @@ class CaptchaHandler:
         :return: str, 验证码的文字
         """
         api_post_url = "http://www.bingtop.com/ocr/upload/"
-        # with open(img_url, 'rb') as pic_file:
-        #     img64 = base64.b64encode(pic_file.read())
+
         params = {
             "username": "liulu",
             "password": "19981229",
@@ -36,18 +34,22 @@ class CaptchaHandler:
         if not response.status_code == 200:
             return ""
         data = json.loads(response.text)
+
         # 出错则 message 非空
         if data["message"]:
             return ""
-        return data["recognition"]
+        return data["data"]["recognition"]
 
 
-class Spider:
+class SingleSpider:
     """ Spider 实现了完整的预约过程
     """
     # 青岛政务 url
-    base_url = "http://"
-    post_url = "http://"
+    base_url = "http://kzyynew.qingdao.gov.cn:81/dist/index.html"
+    get_url = "http://kzyynew.qingdao.gov.cn:81/kz/getAreaList"
+    sfPage_url = "http://kzyynew.qingdao.gov.cn:81/kz/sfPage"
+    captcha_url = "http://kzyynew.qingdao.gov.cn:81/kz/captcha"
+    post_url = "http://kzyynew.qingdao.gov.cn:81/kz/addSforder"
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Linux; Android 10; Redmi K20 Pro Build/QKQ1.190825.002; wv) AppleWebKit/537.36 " +
@@ -68,32 +70,32 @@ class Spider:
 
     def subscribe(self) -> None:
         """ 为一条预约信息预约
-        :param index, 为该进程分配的
-        :param queue, 保存进程信息的队列
         """
-        r = self.session.get(self.base_url, headers=self.headers)
+        pre_url_list = [self.base_url, self.get_url]
+        for url in pre_url_list:
+            r = self.session.get(url, headers=self.headers)
+            if not r.status_code == 200:
+                return
+
+        # 下载验证码
+        r = self.session.get(self.captcha_url, headers=self.headers)
         if not r.status_code == 200:
-            # return False
-            # queue.put(ProcessState._make([index, False]))
             return
-
-        # TODO 解析验证码图片
-        image = ""
-
+        image = r.content
+        # 识别验证码
         captcha = CaptchaHandler.parse_image(image)
-        self.order["captcha"] = captcha
-
+        if not captcha:
+            return
+        # 表单添加 验证码参数
+        self.order["capval"] = captcha
         # 提交表单
-        r = self.session.post(self.post_url, headers=self.headers, data=self.order)
+        r = self.session.post(self.post_url + f"?capval={captcha}",
+                              headers=self.headers, json=self.order)
 
         if not r.status_code == 200:
-            # queue.put(ProcessState._make([index, False]))
             return
 
-        # TODO 解析返回的 json
         r = json.loads(r.text)
-        if r["status"] == "成功":
-            # queue.put(ProcessState._make([index, True]))
+
+        if "成功" in r["msg"] or "ok" in r["msg"] or "OK" in r["msg"]:
             self.achieved = True
-        # else:
-        #     queue.put(ProcessState._make([index, False]))
