@@ -11,12 +11,6 @@ spider 提供了完整功能的实现 Spider类
 # 子进程信息, 第几个预约请求, 是否成功, 返回信息
 PState = namedtuple("PState", ["id", "state", "msg"])
 
-# class PState:
-#     def __init__(self, index: int, state: bool, msg: str):
-#         self.id = index
-#         self.state = state
-#         self.msg = msg
-
 
 class CaptchaHandler:
     """ CaptchaHandler 用于识别图形验证码
@@ -101,7 +95,6 @@ class SingleSpider:
                               json=self.order)
         r = json.loads(r.text)
 
-        st: str = r["msg"]
         if "成功" in r["msg"] or "OK" in r["msg"].capitalize():
             return PState._make([self.index, True, ""])
 

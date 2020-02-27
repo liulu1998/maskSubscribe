@@ -16,7 +16,7 @@ main包 提供 MainScheduler主调度类
 # 进程数
 NUM_PROCESS = 4
 # 最大尝试次数
-MAX_RETRY = 3
+MAX_RETRY = 5
 
 
 class MultiSpider:
