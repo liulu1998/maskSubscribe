@@ -3,12 +3,19 @@ import json
 import base64
 from collections import namedtuple
 from requests import get, post, Session
+from requests.exceptions import Timeout, ConnectionError
 
 """
 spider 提供了完整功能的实现 Spider类
 """
-# 子进程信息, 第几个预约请求, 是否成功
-ProcessState = namedtuple("ProcessState", ["index", "state"])
+# 子进程信息, 第几个预约请求, 是否成功, 返回信息
+PState = namedtuple("PState", ["id", "state", "msg"])
+
+# class PState:
+#     def __init__(self, index: int, state: bool, msg: str):
+#         self.id = index
+#         self.state = state
+#         self.msg = msg
 
 
 class CaptchaHandler:
@@ -36,7 +43,7 @@ class CaptchaHandler:
         data = json.loads(response.text)
 
         # 出错则 message 非空
-        if data["message"]:
+        if data["code"] != 0:
             return ""
         return data["data"]["recognition"]
 
@@ -59,43 +66,43 @@ class SingleSpider:
         "Host": "kzyynew.qingdao.gov.cn:81"
     }
 
-    def __init__(self, order: dict):
+    def __init__(self, order: dict, index: int):
         """ Spider 构造方法
         :param order, 一次的预约信息
         """
-        # 所有预约信息
+        # 一条预约信息
         self.order = order
+        self.index = index
         self.session = Session()
-        self.achieved = False
 
-    def subscribe(self) -> None:
+    def subscribe(self) -> PState:
         """ 为一条预约信息预约
         """
-        pre_url_list = [self.base_url, self.get_url]
+        pre_url_list = [self.base_url, self.get_url, self.captcha_url]
         for url in pre_url_list:
-            r = self.session.get(url, headers=self.headers)
-            if not r.status_code == 200:
-                return
+            try:
+                r = self.session.get(url, headers=self.headers)
+            except ConnectionError or Timeout:
+                return PState._make([self.index, False, "网络问题"])
+            except r.status_code != 200:
+                return PState._make([self.index, False, f"青岛政务:{r.status_code}"])
 
         # 下载验证码
-        r = self.session.get(self.captcha_url, headers=self.headers)
-        if not r.status_code == 200:
-            return
         image = r.content
         # 识别验证码
         captcha = CaptchaHandler.parse_image(image)
         if not captcha:
-            return
+            return PState._make([self.index, False, "验证码识别错误"])
         # 表单添加 验证码参数
         self.order["capval"] = captcha
         # 提交表单
         r = self.session.post(self.post_url + f"?capval={captcha}",
-                              headers=self.headers, json=self.order)
-
-        if not r.status_code == 200:
-            return
-
+                              headers=self.headers, 
+                              json=self.order)
         r = json.loads(r.text)
 
-        if "成功" in r["msg"] or "ok" in r["msg"] or "OK" in r["msg"]:
-            self.achieved = True
+        st: str = r["msg"]
+        if "成功" in r["msg"] or "OK" in r["msg"].capitalize():
+            return PState._make([self.index, True, ""])
+
+        return PState._make([self.index, False, r["msg"]])

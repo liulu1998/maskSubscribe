@@ -22,7 +22,7 @@ class InfoHandler:
 
             orders = info["orders"]
             for order in orders:
-                order["ordertype"] = 2
+                order["ordertype"] = info["type"]
                 
             return info["startTime"], orders
         except FileNotFoundError or ValueError or JSONDecodeError:
