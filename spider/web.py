@@ -52,6 +52,8 @@ class SingleSpider:
     captcha_url = "http://kzyynew.qingdao.gov.cn:81/kz/captcha"
     post_url = "http://kzyynew.qingdao.gov.cn:81/kz/addSforder"
 
+    success_msg = "正在预约请等待短信通知"
+
     headers = {
         "User-Agent": "Mozilla/5.0 (Linux; Android 10; Redmi K20 Pro Build/QKQ1.190825.002; wv) AppleWebKit/537.36 " +
                       "(KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2" +
@@ -95,7 +97,7 @@ class SingleSpider:
                               json=self.order)
         r = json.loads(r.text)
 
-        if "成功" in r["msg"] or "OK" in r["msg"].capitalize():
-            return PState._make([self.index, True, ""])
+        if self.success_msg in r["msg"]:
+            return PState._make([self.index, True, r["msg"]])
 
         return PState._make([self.index, False, r["msg"]])
