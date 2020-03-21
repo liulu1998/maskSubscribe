@@ -70,6 +70,8 @@ class SingleSpider:
         self.order = order
         self.index = index
         self.session = Session()
+        # 多进程中无法修改对象的标志位属性 (?), 故未在对象内部加入是否成功的标志位属性
+        # 而是把结果信息 写入外部的数据结构
 
     def subscribe(self) -> PState:
         """ 为一条预约信息预约
