@@ -85,9 +85,9 @@ class MultiSpider:
             print(f"spider[{r.id}] 成功? [{r.state}] 信息: {r.msg}")
 
         if flag:
-            print("---- 成功 嘻嘻 ----")
+            print("---- 成功 ----")
         else:
-            print(f"---- 尝试了{total_retry}次 ----\n---- 失败 5555 ----")
+            print(f"---- 尝试了{total_retry}次 ----\n---- 失败 ----")
 
 
 if __name__ == '__main__':

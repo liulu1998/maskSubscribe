@@ -24,11 +24,15 @@ class CaptchaHandler:
         api_post_url = "http://www.bingtop.com/ocr/upload/"
 
         params = {
-            "username": "liulu",
-            "password": "19981229",
+            "username": "",
+            "password": "",
             "captchaData": base64.b64encode(image),
             "captchaType": 1000
         }
+
+        if not params["username"] or not params["password"]:
+            raise ValueError("打码平台用户信息不完整")
+
         response = post(api_post_url, data=params)
 
         # 连接打码平台失败

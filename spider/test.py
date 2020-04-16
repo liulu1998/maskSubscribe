@@ -11,6 +11,12 @@ from spider.info import InfoHandler
 main包 提供 MainScheduler主调度类
 """
 
+"""
+在二〇年代初始爆发了新冠肺炎, 大地好像要把十年间咽下的污物悉数呕出, 黑色的春天。
+
+听说武汉封锁城市的消息, 我想到了《鼠疫》, 也许生活本身是一场漫长的瘟疫。
+"""
+
 # 进程数
 NUM_PROCESS = 4
 # 最大尝试次数
@@ -71,9 +77,9 @@ class MainScheduler:
             time.sleep(0.1)
 
         if flag:
-            print("---- 成功 嘻嘻嘻 ----")
+            print("---- 成功 ----")
         else:
-            print("---- 失败 55555 ----")
+            print("---- 失败 ----")
 
 
 if __name__ == '__main__':

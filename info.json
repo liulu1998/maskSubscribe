@@ -3,16 +3,16 @@
   "startTime": "09:30",
   "orders": [
 	  {
-		"address": "嗷嗷东路5号呜呜社区5号楼5单元501户",
-		"name": "刘陆",
-		"mobile": "17745183060",
-		"code": "123456199812297890",
-		"area": "汪汪区",
-		"street": "碎冰冰街道办事处"
+	  	"address": "第一条信息的详细地址",
+	 	"name": "对应的姓名",
+		"mobile": "手机号",
+		"code": "身份证号",
+		"area": "区",
+		"street": "街道, 参加 docs/street.json"
 	  },
 	  {
-	  	"address": "详细地址",
-	 	"name": "姓名",
+	  	"address": "第二条信息的详细地址",
+	 	"name": "对应的姓名",
 		"mobile": "手机号",
 		"code": "身份证号",
 		"area": "区",
